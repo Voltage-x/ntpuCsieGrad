@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[41]:
+# In[2]:
 
 
 from selenium import webdriver
@@ -107,11 +107,6 @@ def calFunc():
         print("程式能力畢業資格已通過\n")
 
 
-studentNo = int(input('請輸入學生資訊系統帳號(學號)：'))
-password = getpass('請輸入學生資訊系統密碼：')
-code_point = int(input('請輸入大學程式能力檢定通過題數：'))
-
-print("\n正在從學生資訊系統取得資料中...\n")
 
 #open Chrome browser
 chrome_options = Options()
@@ -119,16 +114,28 @@ chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
 driver = webdriver.Chrome(options=chrome_options)
 
-#visit website
-driver.get('https://ohs01.ntpu.edu.tw/student_new.htm')
-#get account bar
-accountBar = driver.find_element_by_name('stud_num')
-passwordBar = driver.find_element_by_name('passwd')
-#input account info
-accountBar.send_keys(studentNo)
-passwordBar.send_keys(password)
-#submit
-driver.find_element_by_id('loginBtn1').click()
+while True:
+    #visit website
+    driver.get('https://ohs01.ntpu.edu.tw/student_new.htm')
+    #get account bar
+    accountBar = driver.find_element_by_name('stud_num')
+    passwordBar = driver.find_element_by_name('passwd')
+    #input account info
+    studentNo = int(input('請輸入學生資訊系統帳號(學號)：'))
+    password = getpass('請輸入學生資訊系統密碼：')
+    accountBar.send_keys(studentNo)
+    passwordBar.send_keys(password)
+    #submit
+    driver.find_element_by_id('loginBtn1').click()
+    if driver.current_url != 'https://ohs01.ntpu.edu.tw/pls/pm/stud_system.login':
+        break
+    else:
+        print('帳號或密碼錯誤，請重新輸入')
+    
+
+code_point = int(input('請輸入大學程式能力檢定通過題數：'))
+
+print("\n正在從學生資訊系統取得資料中...\n")
 
 #go to  graduate page
 driver.get('https://ohs01.ntpu.edu.tw/pls/univer/query_all_course.judge?func=9')
@@ -195,7 +202,8 @@ for course in selectiveCourse:
 if languageCourse[1] == 4:
     languageCourse[1] = 6
 
+driver.quit()
 calFunc()
 
-input()
+input('按Enter鍵或關閉視窗離開...')
 
